@@ -18,17 +18,6 @@ async function main() {
         combo.appendChild(option);
     }
 
-    let basePaises = result.data.Countries;
-
-    let pais = document.querySelector('#cmbCountry').value;
-
-    renderInfoCountry(pais, basePaises);
-
-    document.querySelector('#cmbCountry').addEventListener('change', () => {
-        pais = document.querySelector('#cmbCountry').value;
-        renderInfoCountry(pais, basePaises);
-    });
-
     document.querySelector('#filtro').addEventListener('click', async function filtrar() {
         let date_start = `${document.querySelector('#date_start').value}T00:00:00Z`;
         let date_end = `${document.querySelector('#date_end').value}T23:59:59Z`;
@@ -203,6 +192,56 @@ async function main() {
                 break;
         }
 
+        let totalConfirmados = pais_filtro_datas.data.map(data => data.Confirmed);
+
+        totalConfirmados = totalConfirmados.map((value, index) => {
+            var before = totalConfirmados[index - 1];
+            if (before !== undefined) {
+                return value - before;
+            }
+        });
+
+        totalConfirmados = totalConfirmados.filter(value => value !== undefined);
+
+        totalConfirmados = totalConfirmados.reduce((a, b) => {
+            return a + b
+        });
+
+        let totalMortes = pais_filtro_datas.data.map(data => data.Deaths);
+
+        totalMortes = totalMortes.map((value, index) => {
+            var before = totalMortes[index - 1];
+            if (before !== undefined) {
+                return value - before;
+            }
+        });
+
+        totalMortes = totalMortes.filter(value => value !== undefined);
+
+        totalMortes = totalMortes.reduce((a, b) => {
+            return a + b
+        });
+
+        let totalRecuperados = pais_filtro_datas.data.map(data => data.Recovered);
+
+        totalRecuperados = totalRecuperados.map((value, index) => {
+            var before = totalRecuperados[index - 1];
+            if (before !== undefined) {
+                return value - before;
+            }
+        });
+
+        totalRecuperados = totalRecuperados.filter(value => value !== undefined);
+
+        totalRecuperados = totalRecuperados.reduce((a, b) => {
+            return a + b
+        });
+
+        console.log(totalConfirmados, totalMortes, totalRecuperados);
+
+        document.querySelector('#kpiconfirmed').innerHTML = totalConfirmados.toLocaleString('pt-BR');
+        document.querySelector('#kpideaths').innerHTML = totalMortes.toLocaleString('pt-BR');
+        document.querySelector('#kpirecovered').innerHTML = totalRecuperados.toLocaleString('pt-BR');
     });
 
 }
